@@ -45,4 +45,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.coil)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.gson)
 }

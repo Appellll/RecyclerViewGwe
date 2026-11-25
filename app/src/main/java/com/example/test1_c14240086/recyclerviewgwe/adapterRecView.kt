@@ -2,12 +2,25 @@ package com.example.test1_c14240086.recyclerviewgwe
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import coil.load
 import com.example.test1_c14240086.recyclerviewgwe.databinding.ItemRecyclerBinding
 
 class AdapterRecView (private val listWayang: ArrayList<DcWayang>) :
+
     RecyclerView.Adapter<AdapterRecView.ListViewHolder>() {
+    private lateinit var onItemClickCallBack: OnItemClickCallBack
+
+    interface OnItemClickCallBack {
+        fun onItemClicked(data: DcWayang)
+    }
+
+    fun setOnClickCallBack(onItemClickCallBack: OnItemClickCallBack){
+        this.onItemClickCallBack = onItemClickCallBack
+    }
+
     class ListViewHolder(val binding : ItemRecyclerBinding) :
         RecyclerView.ViewHolder(binding.root)
     override fun onCreateViewHolder(
@@ -30,10 +43,27 @@ class AdapterRecView (private val listWayang: ArrayList<DcWayang>) :
         holder.binding.namaWayang.text = wayang.nama
         holder.binding.karakterWayang.text = wayang.karakter
         holder.binding.deskripsiWayang.text = wayang.deskripsi
+        val circularProgressDrawable = CircularProgressDrawable(holder.itemView.context).apply {
+            strokeWidth = 5f
+            centerRadius = 30f
+            start()
+        }
         holder.binding.gambarWayang.load(wayang.foto){
             crossfade(true)
-            placeholder(R.drawable.ic_launcher_background)
+            placeholder(circularProgressDrawable)
             error(R.drawable.ic_launcher_background)
+        }
+
+        holder.binding.gambarWayang.setOnClickListener{
+            Toast.makeText(
+                holder.itemView.context,
+                "Gambar ${wayang.nama} diklik",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            if (::onItemClickCallBack.isInitialized){
+                onItemClickCallBack.onItemClicked(wayang)
+            }
         }
     }
 

@@ -1,11 +1,14 @@
 package com.example.test1_c14240086.recyclerviewgwe
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.test1_c14240086.recyclerviewgwe.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -27,9 +30,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         siapkanData()
         tambahData()
-        tampilkanData()
+        binding.btnToggleLayout.setOnCheckedChangeListener { _, isChecked ->
+            tampilkanData()
+        }
 
     }
 
@@ -54,7 +61,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun tampilkanData(){
-        binding.rvWayang.layoutManager = LinearLayoutManager(this)
+        if (binding.btnToggleLayout.isChecked){
+            binding.rvWayang.layoutManager = GridLayoutManager(this, 2)
+        } else {
+            binding.rvWayang.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+        }
         binding.rvWayang.adapter = AdapterRecView(_arWayang)
+
+        val adapterWayang = AdapterRecView(_arWayang)
+        adapterWayang.setOnClickCallBack(object : AdapterRecView.OnItemClickCallBack {
+            override fun onItemClicked(data: DcWayang) {
+                val intent = Intent(this@MainActivity, DetailActivity::class.java).apply{
+                    putExtra("nama",data.nama)
+                    putExtra("karakter", data.karakter)
+                    putExtra("deskripsi", data.deskripsi)
+                    putExtra("foto",data.foto)
+                }
+                startActivity(intent)
+            }
+        })
+        binding.rvWayang.adapter = adapterWayang
     }
 }
